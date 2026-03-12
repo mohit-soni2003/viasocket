@@ -1,154 +1,194 @@
 const express = require("express");
-const axios = require("axios");
-const BitrixInstall = require("./dbmodel");
 const mongoose = require("mongoose");
+const BitrixInstall = require("./dbmodel");
 
 const app = express();
 const PORT = 3000;
 
-// Middleware
+// middleware
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
-// MongoDB connection
-mongoose.connect("mongodb+srv://mohitsonip1847_db_user:XxqltokHHh6h58v6@cluster0.osyvqao.mongodb.net/CoinTrack", {
-})
-  .then(() => console.log("MongoDB connected"))
-  .catch(err => console.log("MongoDB error:", err));
+/* -----------------------------
+   MongoDB Connection
+----------------------------- */
 
+mongoose.connect("mongodb+srv://mohitsonip1847_db_user:XxqltokHHh6h58v6@cluster0.osyvqao.mongodb.net/CoinTrack")
+.then(()=> console.log("MongoDB connected"))
+.catch(err=> console.log("MongoDB error:",err));
 
+/* -----------------------------
+   Home Route
+----------------------------- */
 
-
-
-// Home route
-app.get("/", (req, res) => {
-  res.send("Bitrix App Server Running");
+app.get("/", (req,res)=>{
+    res.send("Bitrix App Server Running");
 });
 
 
-// Installer endpoint
+/* -----------------------------
+   INSTALLER PAGE (GET)
+   Bitrix loads this page
+   after admin clicks install
+----------------------------- */
 
-app.get("/bitrix/install", (req, res) => {
-  res.status(200).send("Bitrix installer endpoint is active");
-});
+app.get("/bitrix/install",(req,res)=>{
 
-app.post("/bitrix/install", async (req, res) => {
+res.send(`
+<!DOCTYPE html>
+<html>
+<head>
+<title>Installing App</title>
+<script src="https://api.bitrix24.com/api/v1/"></script>
+</head>
 
-  try {
+<body>
 
-    console.log("Query:", req.query);
-    console.log("Body:", req.body);
+<h2>Installing Viasocket App...</h2>
 
-    const {
-      AUTH_ID,
-      REFRESH_ID,
-      AUTH_EXPIRES,
-      SERVER_ENDPOINT,
-      member_id,
-      status,
-      PLACEMENT
-    } = req.body;
+<script>
 
-    const DOMAIN = req.query.DOMAIN;
+BX24.init(function(){
 
-    const installData = {
-      domain: DOMAIN,
-      access_token: AUTH_ID,
-      refresh_token: REFRESH_ID,
-      endpoint: SERVER_ENDPOINT,
-      member_id: member_id,
-      auth_expires: AUTH_EXPIRES,
-      placement: PLACEMENT,
-      status: status
-    };
+console.log("Bitrix initialized");
 
-    const saved = await BitrixInstall.findOneAndUpdate(
-      { member_id: member_id },
-      installData,
-      { upsert: true, new: true }
-    );
+BX24.callMethod("app.info",{},function(result){
 
-    console.log("Saved Install:", saved);
+console.log(result.data());
 
-    res.status(200).json({
-      message: "Bitrix installation stored successfully",
-      data: saved
-    });
-  } catch (err) {
+if(result.data().INSTALLED === false){
 
-    console.error("Install Error:", err);
-    res.status(500).send("Install failed");
+BX24.callMethod(
+"placement.bind",
+{
+PLACEMENT:"CRM_DEAL_DETAIL_TAB",
+HANDLER:"https://viasocket-1xyz.onrender.com/deal-tab",
+TITLE:"Viasocket Data"
+},
+function(){
 
-  }
+console.log("Placement registered");
+
+BX24.installFinish();
 
 });
 
-app.get("/bitrix/app", (req, res) => {
-
-  res.send(`
-    <html>
-      <body>
-        <h2>Bitrix App Loaded</h2>
-        <p>Domain: ${req.query.DOMAIN}</p>
-        <p>Member ID: ${req.query.member_id}</p>
-      </body>
-    </html>
-  `);
+}
 
 });
 
-// // Call Bitrix API
-// app.get("/bitrix/user", async (req, res) => {
+});
 
-//   const memberId = req.query.member_id;
+</script>
 
-//   try {
+</body>
+</html>
+`);
 
-//     const data = await BitrixInstall.findOne({ member_id: memberId });
-
-//     if (!data) {
-//       return res.send("Installation not found");
-//     }
-
-//     const response = await axios.get(
-//       `https://${data.domain}/rest/user.current`,
-//       {
-//         params: {
-//           auth: data.access_token
-//         }
-//       }
-//     );
-
-//     res.json(response.data);
-
-//   } catch (err) {
-
-//     console.error("Bitrix API Error:", err.response?.data || err.message);
-
-//     res.status(500).send("API call failed");
-
-//   }
-
-// });
+});
 
 
-// App UI page
-// app.get("/bitrix/app", (req, res) => {
+/* -----------------------------
+   INSTALL API (POST)
+   Bitrix sends tokens here
+----------------------------- */
 
-//   res.send(`
-//     <html>
-//       <body>
-//         <h2>Bitrix App Loaded</h2>
-//         <p>DOMAIN: ${req.query.DOMAIN}</p>
-//         <p>AUTH_ID: ${req.query.AUTH_ID}</p>
-//       </body>
-//     </html>
-//   `);
+app.post("/bitrix/install", async(req,res)=>{
 
-// });
+try{
+
+console.log("Query:",req.query);
+console.log("Body:",req.body);
+
+const {
+AUTH_ID,
+REFRESH_ID,
+AUTH_EXPIRES,
+SERVER_ENDPOINT,
+member_id,
+status,
+PLACEMENT
+} = req.body;
+
+const DOMAIN = req.query.DOMAIN;
+
+const installData = {
+domain:DOMAIN,
+access_token:AUTH_ID,
+refresh_token:REFRESH_ID,
+endpoint:SERVER_ENDPOINT,
+member_id:member_id,
+auth_expires:AUTH_EXPIRES,
+placement:PLACEMENT,
+status:status
+};
+
+const saved = await BitrixInstall.findOneAndUpdate(
+{member_id:member_id},
+installData,
+{upsert:true,new:true}
+);
+
+console.log("Saved Install:",saved);
+
+res.status(200).send("Installation stored");
+
+}catch(err){
+
+console.error("Install Error:",err);
+res.status(500).send("Install failed");
+
+}
+
+});
 
 
-// Start server
-app.listen(PORT, () => {
-  console.log("Server running on port " + PORT);
+/* -----------------------------
+   MAIN APP PAGE
+----------------------------- */
+
+app.get("/bitrix/app",(req,res)=>{
+
+res.send(`
+<html>
+<body>
+
+<h2>Viasocket Bitrix App</h2>
+
+<p>Domain: ${req.query.DOMAIN}</p>
+<p>Member: ${req.query.member_id}</p>
+
+</body>
+</html>
+`);
+
+});
+
+
+/* -----------------------------
+   DEAL TAB UI
+----------------------------- */
+
+app.get("/deal-tab",(req,res)=>{
+
+res.send(`
+<html>
+<body>
+
+<h3>Deal Tab Loaded</h3>
+<p>This is the custom tab inside deal.</p>
+
+</body>
+</html>
+`);
+
+});
+
+
+/* -----------------------------
+   START SERVER
+----------------------------- */
+
+app.listen(PORT,()=>{
+console.log("Server running on port "+PORT);
 });
