@@ -156,6 +156,8 @@ app.all("/bitrix/app", (req, res) => {
 <h2>Viasocket Bitrix App</h2>
 
 <p>Domain: ${req.query.DOMAIN}</p>
+<p>App is installed refresh your app</p>
+
 
 
 </body>
