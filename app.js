@@ -147,7 +147,7 @@ app.post("/bitrix/install", async (req, res) => {
    MAIN APP PAGE
 ----------------------------- */
 
-app.get("/bitrix/app", (req, res) => {
+app.all("/bitrix/app", (req, res) => {
 
   res.send(`
 <html>
