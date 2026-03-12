@@ -156,7 +156,7 @@ app.all("/bitrix/app", (req, res) => {
 <h2>Viasocket Bitrix App</h2>
 
 <p>Domain: ${req.query.DOMAIN}</p>
-<p>Member: ${req.query.member_id}</p>
+
 
 </body>
 </html>
