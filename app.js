@@ -164,82 +164,137 @@ res.send(`
 <!DOCTYPE html>
 <html>
 <head>
-<title>Viasocket App Installed</title>
+    <title>viaSocket App Installed</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f0f2f5;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            color: #333;
+        }
 
-<style>
-body{
-font-family: Arial, sans-serif;
-background:#f4f6f9;
-display:flex;
-justify-content:center;
-align-items:center;
-height:100vh;
-margin:0;
-}
+        .container {
+            background: white;
+            padding: 50px;
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+            text-align: center;
+            max-width: 480px;
+            /* Updated border-top to match the button color */
+            border-top: 6px solid rgb(138 26 11);
+        }
 
-.container{
-background:white;
-padding:40px;
-border-radius:10px;
-box-shadow:0 4px 15px rgba(0,0,0,0.1);
-text-align:center;
-max-width:500px;
-}
+        .success-icon {
+            font-size: 64px;
+            margin-bottom: 20px;
+            display: block;
+        }
 
-h1{
-color:#2e7d32;
-margin-bottom:10px;
-}
+        h1 {
+            color: #1a1a1a;
+            font-size: 28px;
+            margin-bottom: 10px;
+            letter-spacing: -0.5px;
+        }
 
-p{
-color:#555;
-font-size:16px;
-}
+        .brand-text {
+            /* Updated text color to match the brand color */
+            color: rgb(138 26 11);
+            font-weight: bold;
+        }
 
-button{
-margin-top:20px;
-padding:10px 20px;
-font-size:16px;
-background:#0d6efd;
-color:white;
-border:none;
-border-radius:6px;
-cursor:pointer;
-}
+        p {
+            color: #5f6368;
+            font-size: 16px;
+            line-height: 1.6;
+            margin-bottom: 25px;
+        }
 
-button:hover{
-background:#0b5ed7;
-}
-</style>
+        .instruction-box {
+            background: #f8f9fa;
+            border: 1px dashed #dadce0;
+            padding: 20px;
+            border-radius: 12px;
+            text-align: left;
+            margin-bottom: 25px;
+        }
 
+        .instruction-box h2 {
+            font-size: 14px;
+            text-transform: uppercase;
+            color: #70757a;
+            margin-top: 0;
+            margin-bottom: 12px;
+            letter-spacing: 1px;
+        }
+
+        ul {
+            margin: 0;
+            padding-left: 20px;
+            color: #3c4043;
+            font-size: 15px;
+        }
+
+        li {
+            margin-bottom: 8px;
+        }
+
+        .btn-link {
+            display: inline-block;
+            /* Your requested RGB color */
+            background-color: rgb(138 26 11);
+            color: white;
+            padding: 14px 28px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: opacity 0.2s ease;
+            margin-top: 10px;
+        }
+
+        .btn-link:hover {
+            opacity: 0.9;
+        }
+
+        .refresh-hint {
+            margin-top: 25px;
+            font-size: 12px;
+            color: #9aa0a6;
+        }
+    </style>
 </head>
-
 <body>
 
 <div class="container">
+    <span class="success-icon">✅</span>
+    <h1><span class="brand-text">viaSocket</span> Installed</h1>
+    <p>The installation is complete! You are now ready to automate your workflows between Bitrix24 and your favorite apps.</p>
 
-<h1>✅ Viasocket Installed</h1>
+    <div class="instruction-box">
+        <h2>Next Steps:</h2>
+        <ul>
+            <li><strong>Refresh</strong> your browser page (F5 or ⌘+R).</li>
+            <li>Alternatively, <strong>reopen</strong> the app from the Bitrix24 menu.</li>
+        </ul>
+    </div>
 
-<p>Your Viasocket application has been successfully installed.</p>
+    <a href="https://viasocket.com/signup?state={%22utm_source%22:%22/%22}&utm_source=/" target="_blank" class="btn-link">Finish Setup on viaSocket →</a>
 
-
-<p>Please refresh the Bitrix24 page or reopen the application to start using it.</p>
-
+    <div class="refresh-hint">
+        Installation reference: BX24-Viasocket-v1
+    </div>
+</div>
 
 <script src="https://api.bitrix24.com/api/v1/"></script>
-
 <script>
-function refreshBitrix(){
-
-BX24.init(function(){
-
-BX24.callMethod('app.reload');
-
-});
-
-}
+    BX24.init(function(){
+        console.log("viaSocket installation page loaded.");
+    });
 </script>
-</div>
 
 </body>
 </html>
