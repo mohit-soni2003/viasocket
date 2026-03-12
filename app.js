@@ -13,8 +13,8 @@ app.use(express.json());
 // MongoDB connection
 mongoose.connect("mongodb+srv://mohitsonip1847_db_user:XxqltokHHh6h58v6@cluster0.osyvqao.mongodb.net/CoinTrack", {
 })
-.then(() => console.log("MongoDB connected"))
-.catch(err => console.log("MongoDB error:", err));
+  .then(() => console.log("MongoDB connected"))
+  .catch(err => console.log("MongoDB error:", err));
 
 
 
@@ -65,8 +65,10 @@ app.post("/bitrix/install", async (req, res) => {
 
     console.log("Saved Install:", saved);
 
-    res.status(200).send("Bitrix installation stored successfully");
-
+    res.status(200).json({
+      message: "Bitrix installation stored successfully",
+      data: saved
+    });
   } catch (err) {
 
     console.error("Install Error:", err);
@@ -76,6 +78,19 @@ app.post("/bitrix/install", async (req, res) => {
 
 });
 
+app.get("/bitrix/app", (req, res) => {
+
+  res.send(`
+    <html>
+      <body>
+        <h2>Bitrix App Loaded</h2>
+        <p>Domain: ${req.query.DOMAIN}</p>
+        <p>Member ID: ${req.query.member_id}</p>
+      </body>
+    </html>
+  `);
+
+});
 
 // // Call Bitrix API
 // app.get("/bitrix/user", async (req, res) => {
