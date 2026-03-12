@@ -27,6 +27,11 @@ app.get("/", (req, res) => {
 
 
 // Installer endpoint
+
+app.get("/bitrix/install", (req, res) => {
+  res.status(200).send("Bitrix installer endpoint is active");
+});
+
 app.post("/bitrix/install", async (req, res) => {
 
   try {
