@@ -161,12 +161,73 @@ app.all("/bitrix/app",(req,res)=>{
 const data = req.method === "POST" ? req.body : req.query;
 
 res.send(`
+<!DOCTYPE html>
 <html>
+<head>
+<title>Viasocket App Installed</title>
+
+<style>
+body{
+font-family: Arial, sans-serif;
+background:#f4f6f9;
+display:flex;
+justify-content:center;
+align-items:center;
+height:100vh;
+margin:0;
+}
+
+.container{
+background:white;
+padding:40px;
+border-radius:10px;
+box-shadow:0 4px 15px rgba(0,0,0,0.1);
+text-align:center;
+max-width:500px;
+}
+
+h1{
+color:#2e7d32;
+margin-bottom:10px;
+}
+
+p{
+color:#555;
+font-size:16px;
+}
+
+button{
+margin-top:20px;
+padding:10px 20px;
+font-size:16px;
+background:#0d6efd;
+color:white;
+border:none;
+border-radius:6px;
+cursor:pointer;
+}
+
+button:hover{
+background:#0b5ed7;
+}
+</style>
+
+</head>
+
 <body>
 
-<h2>Viasocket Bitrix App</h2>
+<div class="container">
 
-<p>Domain: ${data.DOMAIN}</p>
+<h1>✅ Viasocket Installed</h1>
+
+<p>Your Viasocket application has been successfully installed.</p>
+
+
+<p>Please refresh the Bitrix24 page or reopen the application to start using it.</p>
+
+<button onclick="location.reload()">Refresh Page</button>
+
+</div>
 
 </body>
 </html>
