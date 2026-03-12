@@ -14,15 +14,15 @@ app.use(express.json());
 ----------------------------- */
 
 mongoose.connect("mongodb+srv://mohitsonip1847_db_user:XxqltokHHh6h58v6@cluster0.osyvqao.mongodb.net/CoinTrack")
-.then(()=> console.log("MongoDB connected"))
-.catch(err=> console.log("MongoDB error:",err));
+  .then(() => console.log("MongoDB connected"))
+  .catch(err => console.log("MongoDB error:", err));
 
 /* -----------------------------
    Home Route
 ----------------------------- */
 
-app.get("/", (req,res)=>{
-    res.send("Bitrix App Server Running");
+app.get("/", (req, res) => {
+  res.send("Bitrix App Server Running");
 });
 
 
@@ -32,9 +32,9 @@ app.get("/", (req,res)=>{
    after admin clicks install
 ----------------------------- */
 
-app.get("/bitrix/install",(req,res)=>{
+app.get("/bitrix/install", (req, res) => {
 
-res.send(`
+  res.send(`
 <!DOCTYPE html>
 <html>
 <head>
@@ -93,52 +93,52 @@ BX24.installFinish();
    Bitrix sends tokens here
 ----------------------------- */
 
-app.post("/bitrix/install", async(req,res)=>{
+app.post("/bitrix/install", async (req, res) => {
 
-try{
+  try {
 
-console.log("Query:",req.query);
-console.log("Body:",req.body);
+    console.log("Query:", req.query);
+    console.log("Body:", req.body);
 
-const {
-AUTH_ID,
-REFRESH_ID,
-AUTH_EXPIRES,
-SERVER_ENDPOINT,
-member_id,
-status,
-PLACEMENT
-} = req.body;
+    const {
+      AUTH_ID,
+      REFRESH_ID,
+      AUTH_EXPIRES,
+      SERVER_ENDPOINT,
+      member_id,
+      status,
+      PLACEMENT
+    } = req.body;
 
-const DOMAIN = req.query.DOMAIN;
+    const DOMAIN = req.query.DOMAIN;
 
-const installData = {
-domain:DOMAIN,
-access_token:AUTH_ID,
-refresh_token:REFRESH_ID,
-endpoint:SERVER_ENDPOINT,
-member_id:member_id,
-auth_expires:AUTH_EXPIRES,
-placement:PLACEMENT,
-status:status
-};
+    const installData = {
+      domain: DOMAIN,
+      access_token: AUTH_ID,
+      refresh_token: REFRESH_ID,
+      endpoint: SERVER_ENDPOINT,
+      member_id: member_id,
+      auth_expires: AUTH_EXPIRES,
+      placement: PLACEMENT,
+      status: status
+    };
 
-const saved = await BitrixInstall.findOneAndUpdate(
-{member_id:member_id},
-installData,
-{upsert:true,new:true}
-);
+    const saved = await BitrixInstall.findOneAndUpdate(
+      { member_id: member_id },
+      installData,
+      { upsert: true, new: true }
+    );
 
-console.log("Saved Install:",saved);
+    console.log("Saved Install:", saved);
 
-res.status(200).send("Installation stored");
+    res.redirect("/bitrix/install");
 
-}catch(err){
+  } catch (err) {
 
-console.error("Install Error:",err);
-res.status(500).send("Install failed");
+    console.error("Install Error:", err);
+    res.status(500).send("Install failed");
 
-}
+  }
 
 });
 
@@ -147,9 +147,9 @@ res.status(500).send("Install failed");
    MAIN APP PAGE
 ----------------------------- */
 
-app.get("/bitrix/app",(req,res)=>{
+app.get("/bitrix/app", (req, res) => {
 
-res.send(`
+  res.send(`
 <html>
 <body>
 
@@ -169,9 +169,9 @@ res.send(`
    DEAL TAB UI
 ----------------------------- */
 
-app.get("/deal-tab",(req,res)=>{
+app.get("/deal-tab", (req, res) => {
 
-res.send(`
+  res.send(`
 <html>
 <body>
 
@@ -189,6 +189,6 @@ res.send(`
    START SERVER
 ----------------------------- */
 
-app.listen(PORT,()=>{
-console.log("Server running on port "+PORT);
+app.listen(PORT, () => {
+  console.log("Server running on port " + PORT);
 });
