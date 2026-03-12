@@ -225,7 +225,6 @@ background:#0b5ed7;
 
 <p>Please refresh the Bitrix24 page or reopen the application to start using it.</p>
 
-<button onclick="refreshBitrix()">Refresh Page</button>
 
 <script src="https://api.bitrix24.com/api/v1/"></script>
 
