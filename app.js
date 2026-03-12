@@ -225,8 +225,21 @@ background:#0b5ed7;
 
 <p>Please refresh the Bitrix24 page or reopen the application to start using it.</p>
 
-<button onclick="location.reload()">Refresh Page</button>
+<button onclick="refreshBitrix()">Refresh Page</button>
 
+<script src="https://api.bitrix24.com/api/v1/"></script>
+
+<script>
+function refreshBitrix(){
+
+BX24.init(function(){
+
+BX24.callMethod('app.reload');
+
+});
+
+}
+</script>
 </div>
 
 </body>
