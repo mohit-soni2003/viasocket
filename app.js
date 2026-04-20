@@ -1,4 +1,5 @@
 const express = require("express");
+const axios = require("axios");
 
 const app = express();
 const PORT = 3000;
@@ -96,41 +97,59 @@ Bitrix sends OAuth tokens
 
 app.post("/bitrix/install", async (req, res) => {
   try {
-    const {
-      AUTH_ID,
-      REFRESH_ID,
-      AUTH_EXPIRES,
-      SERVER_ENDPOINT,
-      member_id,
-      status,
-      PLACEMENT
-    } = req.body;
-
-    const DOMAIN = req.query.DOMAIN;
+    console.log("REQ QUERY:", req.query);
+    console.log("REQ BODY:", req.body);
 
     const installData = {
-      domain: DOMAIN,
-      access_token: AUTH_ID,
-      refresh_token: REFRESH_ID,
-      endpoint: SERVER_ENDPOINT,
-      member_id: member_id,
-      auth_expires: AUTH_EXPIRES,
-      placement: PLACEMENT,
-      status: status
+      domain: req.query.DOMAIN || "",
+      protocol: req.query.PROTOCOL || "",
+      lang: req.query.LANG || "",
+      app_sid: req.query.APP_SID || "",
+
+      application_scope: req.body.APPLICATION_SCOPE || "",
+      application_token: req.body.APPLICATION_TOKEN || "",
+      auth_expires: req.body.AUTH_EXPIRES || "",
+      access_token: req.body.AUTH_ID || "",
+      refresh_token: req.body.REFRESH_ID || "",
+      endpoint: req.body.SERVER_ENDPOINT || "",
+      member_id: req.body.member_id || "",
+      status: req.body.status || "",
+      placement: req.body.PLACEMENT || "",
+      placement_options: req.body.PLACEMENT_OPTIONS || ""
     };
 
-    await axios.post("https://flow.sokt.io/func/scriux8a7MNP", installData, {
-      headers: {
-        "Content-Type": "application/json"
+    console.log("INSTALL DATA:", installData);
+
+    const webhookResponse = await axios.post(
+      "https://flow.sokt.io/func/scriux8a7MNP",
+      installData,
+      {
+        headers: {
+          "Content-Type": "application/json"
+        }
       }
+    );
+
+    console.log("Webhook response status:", webhookResponse.status);
+    console.log("Webhook response data:", webhookResponse.data);
+
+    res.status(200).json({
+      success: true,
+      message: "Installation data sent to webhook",
+      data: installData
     });
-
-    console.log("Installation data sent to webhook");
-
-    res.redirect("/bitrix/install");
   } catch (err) {
-    console.error("Install failed:", err?.response?.data || err.message);
-    res.status(500).send("Install failed");
+    console.error("Install failed");
+    console.error("message:", err.message);
+    console.error("status:", err?.response?.status);
+    console.error("response:", err?.response?.data);
+
+    res.status(500).json({
+      success: false,
+      error: err.message,
+      status: err?.response?.status,
+      response: err?.response?.data
+    });
   }
 });
 
