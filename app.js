@@ -133,11 +133,12 @@ app.post("/bitrix/install", async (req, res) => {
     console.log("Webhook response status:", webhookResponse.status);
     console.log("Webhook response data:", webhookResponse.data);
 
-    res.status(200).json({
-      success: true,
-      message: "Installation data sent to webhook",
-      data: installData
-    });
+    // res.status(200).json({
+    //   success: true,
+    //   message: "Installation data sent to webhook",
+    //   data: installData
+    // });
+    res.redirect("/bitrix/install");
   } catch (err) {
     console.error("Install failed");
     console.error("message:", err.message);
