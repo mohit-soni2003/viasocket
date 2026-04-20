@@ -1,21 +1,10 @@
 const express = require("express");
-const mongoose = require("mongoose");
-const BitrixInstall = require("./dbmodel");
 
 const app = express();
 const PORT = 3000;
 
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
-
-/* -----------------------------
-MongoDB
------------------------------ */
-
-mongoose.connect("mongodb+srv://mohitsonip1847_db_user:XxqltokHHh6h58v6@cluster0.osyvqao.mongodb.net/CoinTrack")
-.then(()=>console.log("MongoDB connected"))
-.catch(err=>console.log(err));
-
 
 /* -----------------------------
 Home
@@ -105,50 +94,44 @@ INSTALL API
 Bitrix sends OAuth tokens
 ----------------------------- */
 
-app.post("/bitrix/install",async(req,res)=>{
+app.post("/bitrix/install", async (req, res) => {
+  try {
+    const {
+      AUTH_ID,
+      REFRESH_ID,
+      AUTH_EXPIRES,
+      SERVER_ENDPOINT,
+      member_id,
+      status,
+      PLACEMENT
+    } = req.body;
 
-try{
+    const DOMAIN = req.query.DOMAIN;
 
-const {
-AUTH_ID,
-REFRESH_ID,
-AUTH_EXPIRES,
-SERVER_ENDPOINT,
-member_id,
-status,
-PLACEMENT
-} = req.body;
+    const installData = {
+      domain: DOMAIN,
+      access_token: AUTH_ID,
+      refresh_token: REFRESH_ID,
+      endpoint: SERVER_ENDPOINT,
+      member_id: member_id,
+      auth_expires: AUTH_EXPIRES,
+      placement: PLACEMENT,
+      status: status
+    };
 
-const DOMAIN = req.query.DOMAIN;
+    await axios.post("https://flow.sokt.io/func/scriux8a7MNP", installData, {
+      headers: {
+        "Content-Type": "application/json"
+      }
+    });
 
-const installData={
-domain:DOMAIN,
-access_token:AUTH_ID,
-refresh_token:REFRESH_ID,
-endpoint:SERVER_ENDPOINT,
-member_id:member_id,
-auth_expires:AUTH_EXPIRES,
-placement:PLACEMENT,
-status:status
-};
+    console.log("Installation data sent to webhook");
 
-await BitrixInstall.findOneAndUpdate(
-{member_id:member_id},
-installData,
-{upsert:true,new:true}
-);
-
-console.log("Installation stored");
-
-res.redirect("/bitrix/install");
-
-}catch(err){
-
-console.error(err);
-res.status(500).send("Install failed");
-
-}
-
+    res.redirect("/bitrix/install");
+  } catch (err) {
+    console.error("Install failed:", err?.response?.data || err.message);
+    res.status(500).send("Install failed");
+  }
 });
 
 
